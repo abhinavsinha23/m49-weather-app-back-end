@@ -52,7 +52,39 @@ const comparePass = async (req, res, next) => {
     }
 }
 
+const tokenCheck = async (req, res, next) => {
+    try {
+        const token = req.header("Authorization")
+        
+        const decodedToken = jwt.verify(token, process.env.SECRET)
+        
+        // check the user id encoded in the token exists in the database
+        const user = await User.findOne({
+            where: {
+                id: decodedToken.id
+            }
+        })
+
+        // if it doesn't exist - throw an error
+        if (user === null) {
+            throw new Error("User is not authorised!")
+        }
+
+        req.authUser = user
+        // continue to the controller if it does exist
+        next()
+    
+        
+        
+        // continue to the controller if it does exist
+    }
+    catch (error) {
+        res.status(501).json({errorMessage: error.message, error: error})
+    }
+}
+
 module.exports = {
     hashPass,
-    comparePass
+    comparePass,
+    tokenCheck
 };
