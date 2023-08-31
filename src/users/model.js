@@ -15,6 +15,11 @@ const User = connection.define("User", {
         type: DataTypes.STRING,
         allowNull: false
     },
+    favoriteLocations: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: ""
+    }
     
 },
     {indexes: [{unique: true, fields: ["username", "email"]}]}

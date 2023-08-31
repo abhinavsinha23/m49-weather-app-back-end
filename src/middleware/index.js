@@ -8,7 +8,13 @@ const saltRounds = process.env.SALT_ROUNDS
 // hash password for data safety
 const hashPass = async (req, res, next) => {
     try {
-        req.body.password  = await bcrypt.hash(req.body.password, parseInt(saltRounds))    
+        req.body.password  = await bcrypt.hash(req.body.password, parseInt(saltRounds)) 
+
+        formatEmail = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+
+        if (!formatEmail.test(req.body.email)) {
+            throw new Error("Email incorrect format");
+        }
         
         next()
     } catch (error) {
@@ -43,7 +49,7 @@ const comparePass = async (req, res, next) => {
         
         if (!formatEmail.test(req.body.email)) {
             throw new Error("Email incorrect format");
-          }
+        }
 
         next()
     }
