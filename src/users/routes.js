@@ -2,7 +2,7 @@ const { Router } = require("express")
 
 const { hashPass, comparePass, tokenCheck } = require("../middleware")
 
-const { registerUser, login, deleteUser, addLocation } = require("./controllers")
+const { registerUser, login, deleteUser, addLocation, search} = require("./controllers")
 
 const userRouter = Router()
 
@@ -11,5 +11,6 @@ userRouter.post("/users/login", comparePass, login)
 userRouter.get("/users/authCheck", tokenCheck, login) // persistent login
 userRouter.delete("/users/delete", deleteUser)
 userRouter.put("/users/addFavorite", addLocation)
+userRouter.get("/users/search", search)
 
 module.exports = userRouter

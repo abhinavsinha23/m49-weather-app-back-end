@@ -32,7 +32,7 @@ const login = async (req, res) => {
             user: {
                 username: req.body.username,
                 email: req.body.email,
-                token: token
+                token: token,
             }
         })
     }
@@ -59,6 +59,27 @@ const  deleteUser = async (req, res) => {
     }
 }
 
+const search = async (req, res) => {
+    try {
+        const token = req.header("Authorization")
+        const decodedToken = jwt.verify(token, process.env.SECRET)
+        const user = await User.findOne({
+            where: {
+                id: decodedToken.id
+            }
+        })
+
+        res.status(200).json({
+            message: "Success", 
+            user: user
+        })
+    }
+    catch (error) {
+        res.status(501).json({message: error.message, error: error})
+        console.log(error)
+    }
+}
+
 //CONTROLLER TO ADD LOCATION TO USER MODEL, TAKE USER INFO IN REQ, USE USER INFO TO FIND USER, ADD LOCATION TO USER DATA
 const addLocation = async (req, res) => {
     try{
@@ -68,7 +89,8 @@ const addLocation = async (req, res) => {
         const user = await User.findOne({
             where: {
                 id: decodedToken.id
-            }})
+            }
+        })
             
         let updatedUser
         if (user.favoriteLocations !== "") {
@@ -102,10 +124,53 @@ const addLocation = async (req, res) => {
     }
 }
 
+// const removeLocation = async (req, res) => {
+//     try{
+//         //FIND USER IN DATABASE
+//         const token = req.header("Authorization")
+//         const decodedToken = jwt.verify(token, process.env.SECRET)
+//         const user = await User.findOne({
+//             where: {
+//                 id: decodedToken.id
+//             }
+//         })
+            
+//         let updatedUser
+//         if (user.favoriteLocations !== "") {
+//             updatedUser = await User.update({
+//                 favoriteLocations : user.favoriteLocations + `, ${req.body.newLocation}` 
+//             }, {
+//                 where: {
+//                     username: user.username
+//                 }
+//             });
+//         } else {
+//             updatedUser = await User.update({
+//                 favoriteLocations : req.body.newLocation 
+//             }, {
+//                 where: {
+//                     username: user.username
+//                 }
+//             });
+//         }
+
+//         res.status(200).json({
+//             message: "Successfully added location",
+//             user: {
+//                 username: updatedUser.username,
+//                 favoriteLocations: updatedUser.favoriteLocations
+//             }
+//         })
+//     }
+//     catch (error) {
+//         res.status(501).json({errorMessage: error.message, error: error})
+//     }
+// }
 
 module.exports = {
     registerUser,
     login,
     deleteUser,
+    search,
     addLocation
 }
