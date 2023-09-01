@@ -8,7 +8,8 @@ const  registerUser = async (req, res) => {
             message: "Successfully registered",
              user: {username: user.username, email: user.email}
              })
-    } catch (error) {
+    } 
+    catch (error) {
         res.status(501).json({ errorMessage: error.message, error: error})
         console.log(error)
     }
@@ -53,7 +54,8 @@ const  deleteUser = async (req, res) => {
             message: "Successfully deleted",
              amount: deletedUser
             })
-    } catch (error) {
+    } 
+    catch (error) {
         res.status(501).json({ errorMessage: error.message, error: error})
         console.log(error)
     }
@@ -138,7 +140,8 @@ const removeLocation = async (req, res) => {
         let updatedUser
         if (user.favoriteLocations !== "") {
             updatedUser = await User.update({
-                favoriteLocations : user.favoriteLocations.replace(req.body.removedLocation, "") 
+                // favoriteLocations : user.favoriteLocations.replace(`, ${req.body.removedLocation}`, "")
+                favoriteLocations : user.favoriteLocations.split(", ").splice(`${req.body.removedLocation}`, 1).toString()  
             }, {
                 where: {
                     username: user.username
