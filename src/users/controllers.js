@@ -139,9 +139,11 @@ const removeLocation = async (req, res) => {
             
         let updatedUser
         if (user.favoriteLocations !== "") {
+            let array = user.favoriteLocations.split(", ")
+            let index = array.indexOf(req.body.removedLocation)
             updatedUser = await User.update({
                 // favoriteLocations : user.favoriteLocations.replace(`, ${req.body.removedLocation}`, "")
-                favoriteLocations : user.favoriteLocations.split(", ").splice(`${req.body.removedLocation}`, 1).toString()  
+                favoriteLocations : user.favoriteLocations.split(", ").splice(index, 1).join(", ")  
             }, {
                 where: {
                     username: user.username
