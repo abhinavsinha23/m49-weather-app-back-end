@@ -137,13 +137,28 @@ const removeLocation = async (req, res) => {
             }
         })
             
-        let updatedUser
-        if (user.favoriteLocations !== "") {
-            let array = user.favoriteLocations.split(", ")
-            let index = array.indexOf(req.body.removedLocation)
+        let array = user.favoriteLocations.split(", ")
+
+        if (array.indexOf(req.body.removedLocation) === 0 && array.length == 1) {
             updatedUser = await User.update({
-                // favoriteLocations : user.favoriteLocations.replace(`, ${req.body.removedLocation}`, "")
-                favoriteLocations : user.favoriteLocations.split(", ").splice(index, 1).join(", ")  
+                favoriteLocations : user.favoriteLocations.replace(`${req.body.removedLocation}`, "")
+            },{
+                where: {
+                    username: user.username
+                }
+            })
+            
+        } else if (array.indexOf(req.body.removedLocation) === 0) {
+            updatedUser = await User.update({
+                favoriteLocations : user.favoriteLocations.replace(`${req.body.removedLocation}, `, "")  
+            }, {
+                where: {
+                    username: user.username
+                }
+            });
+        } else {
+            updatedUser = await User.update({
+                favoriteLocations : user.favoriteLocations.replace(`, ${req.body.removedLocation}`, "")
             }, {
                 where: {
                     username: user.username
